@@ -50,7 +50,7 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
    * @return \AKlump\Phpunit\ContainerInterface
    *   A service container instance.
    */
-  abstract public static function getContainer();
+  abstract public function getContainer();
 
   /**
    * {@inheritdoc}
@@ -90,7 +90,7 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
         if (!isset($provided_args[$property])) {
           if ($is_service) {
             // Load a service from the container if the map begins with '@'.
-            $args[$property] = static::getContainer()
+            $args[$property] = $this->getContainer()
               ->get(ltrim($class, '@'));
           }
           else {
