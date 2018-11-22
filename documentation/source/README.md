@@ -4,9 +4,7 @@
 
 ## Summary
 
-Classes to extend \PHPUnit_Framework_TestCase.
-
-**Visit <https://aklump.github.io/phpunit_extras> for full documentation.**
+Classes to extend `\PHPUnit_Framework_TestCase`.
 
 ## Quick Start
 
