@@ -45,12 +45,20 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
   protected $args;
 
   /**
-   * Return a service container.
+   * Return an instance of a service by name.
    *
-   * @return \AKlump\Phpunit\ContainerInterface
-   *   A service container instance.
+   * To support services in your tests, you must implement this method to
+   * return class instances for those services you require for your tests.
+   *
+   * @param string $service_name
+   *   The service name will begin with an '@', e.g. "@database".
+   *
+   * @return null|mixed
+   *   A service class instance or null.
    */
-  abstract public function getContainer();
+  public function getService($service_name) {
+    return NULL;
+  }
 
   /**
    * {@inheritdoc}
@@ -65,8 +73,6 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
       'mockObjectsMap' => [],
     ];
 
-    $is_unit_test = $this instanceof UnitTestBase;
-
     // Allow our tests classes to not use this convention by setting the class
     // to false.  This prevents mocking and instantiation.
     if ($this->schema['classToBeTested'] !== FALSE) {
@@ -80,18 +86,16 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
         }
         list($class, $mock_type) = $class;
 
-        $is_service = strpos($class, '@') === 0;
-        if ($is_service && $is_unit_test) {
-          throw new \RuntimeException("The service container is not available in Unit tests; try a Kernal test instead.");
-        }
-
         // Only set the argument if it's empty.  This allows for seeding in the
         // caller's ::setUp method.
         if (!isset($provided_args[$property])) {
-          if ($is_service) {
-            // Load a service from the container if the map begins with '@'.
-            $args[$property] = $this->getContainer()
-              ->get(ltrim($class, '@'));
+          if (strpos($class, '@') === 0) {
+
+            // We are asking for a service.
+            if (!($service = $this->getService($class))) {
+              throw new \RuntimeException("The following service is unavailable: \"$class\".");
+            }
+            $args[$property] = $service;
           }
           else {
 
