@@ -1,0 +1,20 @@
+{
+    "name": "aklump\/phpunit-extras",
+    "description": "PHPUnit extended to make testing even easier.",
+    "license": "BSD-3-Clause",
+    "homepage": "https:\/\/github.com\/aklump\/phpunit",
+    "authors": [
+        {
+            "name": "Aaron Klump",
+            "email": "sourcecode@intheloftstudios.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "AKlump\\PHPUnit\\": "src"
+        }
+    },
+    "require-dev": {
+        "mockery\/mockery": "^1.0"
+    }
+}
