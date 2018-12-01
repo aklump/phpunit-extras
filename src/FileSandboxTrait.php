@@ -39,12 +39,17 @@ trait FileSandboxTrait {
    *     ...
    *   }
    * @endcode
+   *
+   * @return string
+   *   The path to the the temp dir.
    */
   public static function setUpFileSandbox() {
     self::$sb = static::destroyAndCreateEmptyTestTempDir();
     // Add a trailing slash for brevity in test writing,
     // e.g. self::$sb . $path, instead of self::$sb . "/$path".
     self::$sb = rtrim(self::$sb, '/') . '/';
+
+    return self::$sb;
   }
 
   /**

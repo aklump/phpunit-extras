@@ -32,15 +32,20 @@
 <h2>Quick Start</h2>
 
 <ol>
-<li><p>Put the following in your test's <code>setUp</code> method:</p>
+<li><p>Put the following in your test's <code>::setUp</code> or <code>::setUpBeforeClass</code> method depending upon if you want the directory to empty for each new test (<code>::setUp</code>) or not.</p>
 
 <pre><code>  public function setUp() {
     parent::setUp();
-    $this-&gt;newFileSandbox();
+    $this-&gt;setUpFileSandbox();
+  }
+
+  public function setUpBeforeClass() {
+    parent::setUp();
+    self::setUpFileSandbox();
   }
 </code></pre></li>
-<li><p>Use <code>$this-&gt;sb</code> as the scratch directory path.</p></li>
-<li>Call <code>$this-&gt;newFileSandbox()</code> at any time to empty it's contents.</li>
+<li><p>Use <code>$this-&gt;sb</code> or <code>self::$sb</code> as the scratch directory path.</p></li>
+<li>Call <code>$this-&gt;setUpFileSandbox()</code> at any time to empty it's contents.</li>
 </ol>
 </section>
 
@@ -56,7 +61,7 @@
 </div>
   
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Sat, 24 Nov 2018 08:50:22 -0800</p>
+    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Sat, 01 Dec 2018 13:26:24 -0800</p>
   </div>
 </footer>
 
