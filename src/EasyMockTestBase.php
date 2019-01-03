@@ -10,6 +10,8 @@ use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
  */
 abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
 
+  use MockeryPHPUnitIntegration;
+
   /**
    * A flag to indicate a full mocked object.
    *
@@ -28,7 +30,14 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
    */
   const PARTIAL_MOCK = 1;
 
-  use MockeryPHPUnitIntegration;
+  /**
+   * A flag to indicate the argument value is not a classname but a value.
+   *
+   * Use this when a constructor argument is not a class instance.
+   *
+   * @var int
+   */
+  const VALUE = 2;
 
   /**
    * An instance of the class being tested.
