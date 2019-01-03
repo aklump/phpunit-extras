@@ -14,7 +14,7 @@
             "AKlump\\PHPUnit\\": "src"
         }
     },
-    "require-dev": {
+    "require": {
         "mockery/mockery": "^1.0"
     }
 }
