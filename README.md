@@ -8,7 +8,7 @@ Classes to extend `\PHPUnit_Framework_TestCase`.
 
 ## Quick Start
 
-    composer require aklump\phpunit-extras
+    composer require aklump/phpunit-extras
 
 ## Contributing
 
