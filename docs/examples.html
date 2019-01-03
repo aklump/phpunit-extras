@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Examples</title>
+  <link href="search/tipuesearch.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body class="page--examples">
+<header>
+  <div class="pager">
+  <a href="README.html" class="prev README">&laquo;PHPUnit Extras</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="files.html" class="next files">Working With Files&raquo;</a>
+</div>
+</header>
+
+
+  <h1>Examples</h1>
+  <div class="breadcrumb"><a href="index.html">Index</a></div>
+
+<section>
+
+<h2>Testing a Class with Constructor String Arguments</h2>
+
+<p>Here is a class that takes string as constructor arguments:</p>
+
+<pre><code>  class Bid {
+
+    public function __construct(
+      string $path_to_source,
+      string $path_to_templates
+    ) {
+      $this-&gt;sourcePath = $path_to_source;
+      $this-&gt;templateDirs = [$path_to_templates];
+    }
+</code></pre>
+
+<p>Here's how you'd set the test up:</p>
+
+<pre><code>  protected $schema = [
+    'classToBeTested' =&gt; Bid::class,
+    'classArgumentsMap' =&gt; [
+      'sourcePath' =&gt; [
+        __DIR__ . '/providers/data',
+        self::VALUE,
+      ],
+      'templateDirs' =&gt; [
+        __DIR__ . '/providers/templates',
+        self::VALUE,
+      ],
+    ],
+    'mockObjectsMap' =&gt; [],
+  ];      
+</code></pre>
+</section>
+
+<div class="search__results">
+  <div id="tipue_search_content"></div>
+</div>
+
+<footer>
+  <div class="pager">
+  <a href="README.html" class="prev README">&laquo;PHPUnit Extras</a>
+  <a href="index.html" class="index">Index</a>
+  <a href="files.html" class="next files">Working With Files&raquo;</a>
+</div>
+  
+  <div id="footer-legaleeze">
+    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Thu, 03 Jan 2019 13:31:06 -0800</p>
+  </div>
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="js/core.js"></script>
+</body>
+</html>
+
