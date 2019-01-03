@@ -79,30 +79,37 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
 
       $provided_args = !empty($this->args) ? (array) $this->args : [];
       $args = [];
-      foreach ($this->schema['classArgumentsMap'] as $property => $class) {
+      foreach ($this->schema['classArgumentsMap'] as $property => $value) {
 
-        if (!is_array($class)) {
-          $class = [$class, self::FULL_MOCK];
+        if (!is_array($value)) {
+          $value = [$value, self::FULL_MOCK];
         }
-        list($class, $mock_type) = $class;
+        list($value, $mock_type) = $value;
 
         // Only set the argument if it's empty.  This allows for seeding in the
         // caller's ::setUp method.
         if (!isset($provided_args[$property])) {
-          if (strpos($class, '@') === 0) {
+          if (strpos($value, '@') === 0) {
 
             // We are asking for a service.
-            if (!($service = $this->getService($class))) {
-              throw new \RuntimeException("The following service is unavailable: \"$class\".");
+            if (!($service = $this->getService($value))) {
+              throw new \RuntimeException("The following service is unavailable: \"$value\".");
             }
             $args[$property] = $service;
           }
           else {
+            switch ($mock_type) {
+              case self::FULL_MOCK:
+                $args[$property] = Mockery::mock($value);
+                break;
 
-            // Otherwise create a mock object.
-            $args[$property] = Mockery::mock($class);
-            if ($mock_type === self::PARTIAL_MOCK) {
-              $args[$property]->makePartial();
+              case self::PARTIAL_MOCK:
+                $args[$property]->makePartial();
+                break;
+
+              case self::VALUE:
+                $args[$property] = $value;
+                break;
             }
           }
         }
@@ -168,10 +175,22 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
    */
   public function assertConstructorSetsInternalProperties() {
     foreach (array_keys(get_object_vars($this->args)) as $property) {
-      $reflection = new \ReflectionClass(get_class($this->obj));
-      $value = $reflection->getProperty($property);
-      $value->setAccessible(TRUE);
-      $this->assertSame($this->args->{$property}, $value->getValue($this->obj));
+      $definition = $this->schema['classArgumentsMap'][$property];
+      if (!is_array($definition)) {
+        $definition = [$definition, self::PARTIAL_MOCK];
+      }
+      switch ($definition[1]) {
+        case self::VALUE:
+          $this->assertSame($this->args->{$property}, $definition[0]);
+          break;
+
+        default:
+          $reflection = new \ReflectionClass(get_class($this->obj));
+          $value = $reflection->getProperty($property);
+          $value->setAccessible(TRUE);
+          $this->assertSame($this->args->{$property}, $value->getValue($this->obj));
+          break;
+      }
     }
   }
 
