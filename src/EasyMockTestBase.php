@@ -57,10 +57,10 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
    * Return an instance of a service by name.
    *
    * To support services in your tests, you must implement this method to
-   * return class instances for those services you require for your tests.
+   * return class instances for those services you require via `@service_id`.
    *
    * @param string $service_name
-   *   The service name will begin with an '@', e.g. "@database".
+   *   The service id to lookup.
    *
    * @return null|mixed
    *   A service class instance or null.
@@ -70,14 +70,29 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
   }
 
   /**
+   * Return the schema array for this test case.
+   *
+   * @return array
+   *   Must have the following keys:
+   *   - classToBeTested string|false
+   *   Should have these keys:
+   *   - classArgumentsMap array
+   *   - mockObjectsMap array
+   */
+  protected function getSchema() {
+    return ['classToBeTested' => FALSE];
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function setUp() {
+    $this->schema = static::getSchema();
     if (empty($this->schema)) {
-      throw new \RuntimeException("Missing protected property test definition: \$schema in " . static::class . '.');
+      throw new \RuntimeException(static::class . '::getSchema() must return a non-empty, array.');
     }
-
     $this->schema += [
+      'classToBeTested' => FALSE,
       'classArgumentsMap' => [],
       'mockObjectsMap' => [],
     ];
@@ -85,65 +100,73 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
     // Allow our tests classes to not use this convention by setting the class
     // to false.  This prevents mocking and instantiation.
     if ($this->schema['classToBeTested'] !== FALSE) {
-
       $provided_args = !empty($this->args) ? (array) $this->args : [];
       $args = [];
       foreach ($this->schema['classArgumentsMap'] as $property => $value) {
-
-        if (!is_array($value)) {
-          $value = [$value, self::FULL_MOCK];
-        }
-        list($value, $mock_type) = $value;
-
         // Only set the argument if it's empty.  This allows for seeding in the
         // caller's ::setUp method.
-        if (!isset($provided_args[$property])) {
-          if (strpos($value, '@') === 0) {
-
-            // We are asking for a service.
-            if (!($service = $this->getService($value))) {
-              throw new \RuntimeException("The following service is unavailable: \"$value\".");
-            }
-            $args[$property] = $service;
-          }
-          else {
-            switch ($mock_type) {
-              case self::FULL_MOCK:
-                $args[$property] = Mockery::mock($value);
-                break;
-
-              case self::PARTIAL_MOCK:
-                $args[$property]->makePartial();
-                break;
-
-              case self::VALUE:
-                $args[$property] = $value;
-                break;
-            }
-          }
+        if (array_key_exists($property, $provided_args)) {
+          $args[$property] = $provided_args[$property];
         }
         else {
-          $args[$property] = $provided_args[$property];
+          $args[$property] = $this->createInstanceFromSchemaDirective($value);
         }
       }
       $this->args = (object) $args;
     }
-
-    foreach ($this->schema['mockObjectsMap'] as $property => $class) {
-      if (!isset($this->{$property})) {
-        if (!is_array($class)) {
-          $class = [$class, self::FULL_MOCK];
-        }
-        list($class, $mock_type) = $class;
-        $this->{$property} = Mockery::mock($class);
-        if ($mock_type === self::PARTIAL_MOCK) {
-          $this->{$property}->makePartial();
-        }
+    foreach ($this->schema['mockObjectsMap'] as $property => $value) {
+      if (!property_exists($this, $property)) {
+        $this->{$property} = $this->createInstanceFromSchemaDirective($value);
       }
     }
     if ($this->schema['classToBeTested'] !== FALSE) {
       $this->createObj();
     }
+  }
+
+  /**
+   * Handle the value as passed to a schema map.
+   *
+   * @param mixed $value
+   *   The type of value depends.
+   *
+   * @return mixed
+   *   The expanded value.
+   */
+  private function createInstanceFromSchemaDirective($value) {
+    if (is_callable($value)) {
+      $value = [$value(), self::VALUE];
+    }
+    elseif (is_string($value)) {
+      if (substr($value, 0, 1) === '@') {
+        $value = substr($value, 1);
+        if (!($service = $this->getService($value))) {
+          throw new \RuntimeException("The following service is unavailable: \"$value\".");
+        }
+        $value = [$service, self::VALUE];
+      }
+      else {
+        $value = [$value, self::FULL_MOCK];
+      }
+    }
+    elseif (!is_array($value)) {
+      $value = [$value, self::VALUE];
+    }
+
+    // Determine if mocking is required.
+    list($value, $mock_type) = $value;
+    switch ($mock_type) {
+      case self::FULL_MOCK:
+        $value = Mockery::mock($value);
+        break;
+
+      case self::PARTIAL_MOCK:
+        $value = Mockery::mock($value);
+        $value->makePartial();
+        break;
+    }
+
+    return $value;
   }
 
   /**
