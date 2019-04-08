@@ -2,42 +2,18 @@
 
 namespace AKlump\PHPUnit;
 
-use Mockery;
 use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
 
 /**
- * Abstract test class to easily test objects with auto mocking.
+ * Trait EasyMockTrait.
+ *
+ * Adds simplified object testing and mocking.
+ *
+ * @package AKlump\DrupalTest
  */
-abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
+Trait EasyMockTrait {
 
   use MockeryPHPUnitIntegration;
-
-  /**
-   * A flag to indicate a full mocked object.
-   *
-   * This is the default.
-   *
-   * @var int
-   */
-  const FULL_MOCK = 0;
-
-  /**
-   * A Flag to indicate a partial mock should be created.
-   *
-   * Used for element values as arrays on the classArgumentsMap config.
-   *
-   * @var int
-   */
-  const PARTIAL_MOCK = 1;
-
-  /**
-   * A flag to indicate the argument value is not a classname but a value.
-   *
-   * Use this when a constructor argument is not a class instance.
-   *
-   * @var int
-   */
-  const VALUE = 2;
 
   /**
    * An instance of the class being tested.
@@ -84,9 +60,111 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
   }
 
   /**
-   * {@inheritdoc}
+   * Handle the value as passed to a schema map.
+   *
+   * @param mixed $value
+   *   The type of value depends.
+   *
+   * @return mixed
+   *   The expanded value.
    */
-  public function setUp() {
+  private function createInstanceFromSchemaDirective($value) {
+    if (is_callable($value)) {
+      $value = [$value(), EasyMock::VALUE];
+    }
+    elseif (is_string($value)) {
+      if (substr($value, 0, 1) === '@') {
+        $value = substr($value, 1);
+        if (!($service = $this->getService($value))) {
+          throw new \RuntimeException("The following service is unavailable: \"$value\".");
+        }
+        $value = [$service, EasyMock::VALUE];
+      }
+      else {
+        $value = [$value, EasyMock::FULL];
+      }
+    }
+    elseif (!is_array($value)) {
+      $value = [$value, EasyMock::VALUE];
+    }
+
+    // Determine if mocking is required.
+    list($value, $mock_type) = $value;
+    switch ($mock_type) {
+      case EasyMock::FULL:
+        $value = \Mockery::mock($value);
+        break;
+
+      case EasyMock::PARTIAL:
+        $value = \Mockery::mock($value);
+        $value->makePartial();
+        break;
+    }
+
+    return $value;
+  }
+
+  /**
+   * Create a new instance of $this->obj using $this->args.
+   *
+   * @return $this
+   *   Self for chaining.
+   *
+   * @throws \ReflectionException
+   */
+  protected function createObj() {
+    $objectReflection = new \ReflectionClass($this->schema['classToBeTested']);
+    $this->obj = $objectReflection->newInstanceArgs(array_values(get_object_vars($this->args)));
+
+    return $this;
+  }
+
+  /**
+   * Create a runtime partial test double as $this->obj.
+   *
+   * @return $this
+   *   Self for chaining.
+   *
+   * @link http://docs.mockery.io/en/latest/reference/creating_test_doubles.html#runtime-partial-test-doubles
+   */
+  protected function createMockedObj() {
+    $this->obj = \Mockery::mock(get_class($this->obj), array_values(get_object_vars($this->args)))
+      ->shouldAllowMockingProtectedMethods()
+      ->makePartial();
+
+    return $this;
+  }
+
+  /**
+   * Assert constructor sets internal properties.
+   *
+   * @throws \ReflectionException
+   */
+  public function assertConstructorSetsInternalProperties() {
+    foreach (array_keys(get_object_vars($this->args)) as $property) {
+      $definition = $this->schema['classArgumentsMap'][$property];
+      if (!is_array($definition)) {
+        $definition = [$definition, EasyMock::PARTIAL];
+      }
+      switch ($definition[1]) {
+        case EasyMock::VALUE:
+          $this->assertSame($this->args->{$property}, $definition[0]);
+          break;
+
+        default:
+          $reflection = new \ReflectionClass(get_class($this->obj));
+          $value = $reflection->getProperty($property);
+          $value->setAccessible(TRUE);
+          $this->assertSame($this->args->{$property}, $value->getValue($this->obj));
+          break;
+      }
+    }
+  }
+
+  /**
+   * Add this to your classes' ::setUp method to initialize.
+   */
+  public function easyMockSetUp() {
     $this->schema = static::getSchema();
     if (empty($this->schema)) {
       throw new \RuntimeException(static::class . '::getSchema() must return a non-empty, array.');
@@ -121,108 +199,6 @@ abstract class EasyMockTestBase extends \PHPUnit_Framework_TestCase {
     }
     if ($this->schema['classToBeTested'] !== FALSE) {
       $this->createObj();
-    }
-  }
-
-  /**
-   * Handle the value as passed to a schema map.
-   *
-   * @param mixed $value
-   *   The type of value depends.
-   *
-   * @return mixed
-   *   The expanded value.
-   */
-  private function createInstanceFromSchemaDirective($value) {
-    if (is_callable($value)) {
-      $value = [$value(), self::VALUE];
-    }
-    elseif (is_string($value)) {
-      if (substr($value, 0, 1) === '@') {
-        $value = substr($value, 1);
-        if (!($service = $this->getService($value))) {
-          throw new \RuntimeException("The following service is unavailable: \"$value\".");
-        }
-        $value = [$service, self::VALUE];
-      }
-      else {
-        $value = [$value, self::FULL_MOCK];
-      }
-    }
-    elseif (!is_array($value)) {
-      $value = [$value, self::VALUE];
-    }
-
-    // Determine if mocking is required.
-    list($value, $mock_type) = $value;
-    switch ($mock_type) {
-      case self::FULL_MOCK:
-        $value = Mockery::mock($value);
-        break;
-
-      case self::PARTIAL_MOCK:
-        $value = Mockery::mock($value);
-        $value->makePartial();
-        break;
-    }
-
-    return $value;
-  }
-
-  /**
-   * Create a new instance of $this->obj using $this->args.
-   *
-   * @return $this
-   *   Self for chaining.
-   *
-   * @throws \ReflectionException
-   */
-  protected function createObj() {
-    $objectReflection = new \ReflectionClass($this->schema['classToBeTested']);
-    $this->obj = $objectReflection->newInstanceArgs(array_values(get_object_vars($this->args)));
-
-    return $this;
-  }
-
-  /**
-   * Create a runtime partial test double as $this->obj.
-   *
-   * @return $this
-   *   Self for chaining.
-   *
-   * @link http://docs.mockery.io/en/latest/reference/creating_test_doubles.html#runtime-partial-test-doubles
-   */
-  protected function createMockedObj() {
-    $this->obj = Mockery::mock(get_class($this->obj), array_values(get_object_vars($this->args)))
-      ->shouldAllowMockingProtectedMethods()
-      ->makePartial();
-
-    return $this;
-  }
-
-  /**
-   * Assert constructor sets internal properties.
-   *
-   * @throws \ReflectionException
-   */
-  public function assertConstructorSetsInternalProperties() {
-    foreach (array_keys(get_object_vars($this->args)) as $property) {
-      $definition = $this->schema['classArgumentsMap'][$property];
-      if (!is_array($definition)) {
-        $definition = [$definition, self::PARTIAL_MOCK];
-      }
-      switch ($definition[1]) {
-        case self::VALUE:
-          $this->assertSame($this->args->{$property}, $definition[0]);
-          break;
-
-        default:
-          $reflection = new \ReflectionClass(get_class($this->obj));
-          $value = $reflection->getProperty($property);
-          $value->setAccessible(TRUE);
-          $this->assertSame($this->args->{$property}, $value->getValue($this->obj));
-          break;
-      }
     }
   }
 
