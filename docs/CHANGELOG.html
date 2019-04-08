@@ -20,7 +20,58 @@
   <h1>CHANGELOG</h1>
   <div class="breadcrumb"><a href="index.html">Index</a></div>
 
-<section><h2>1.1 2019-01-10T18:04, aklump</h2>
+<section><h2>1.2</h2>
+
+<ul>
+<li>BREAKING CHANGES!!!</li>
+<li><code>EasyMockTestBase</code> has been replaced with <code>EasyMockTrait</code> and <code>EasyMock</code>.  This will provide greater flexibility in systems that already extend <code>\PHPUnit_Framework_TestCase</code>.</li>
+<li>Instead of <code>extends EasyMockTestBase</code> you need to <code>use EasyMockTrait</code>.</li>
+<li>Replace <code>self::FULL_MOCK</code> with <code>EasyMock::FULL</code></li>
+<li>Replace <code>self::PARTIAL_MOCK</code> with <code>EasyMock::PARTIAL</code></li>
+<li>Replace <code>self::VALUE</code> with <code>EasyMock::VALUE</code></li>
+<li><p>If you were doing this before this update:</p>
+
+<pre><code>use AKlump\PhpUnit\EasyMockTestBase;
+
+class MyTestWithSetUp extends EasyMockTestBase {
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+
+    // Do whatever else you need to do.
+
+    parent::setUp();
+
+  }
+
+}
+</code></pre></li>
+<li><p>Then you need to update your code to do like this:</p>
+
+<pre><code>use AKlump\PhpUnit\EasyMockTrait;
+
+class MyTestWithSetUp extends \PHPUnit_Framework_TestCase {
+
+  use EasyMockTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setUp() {
+    $this-&gt;easyMockSetUp();
+
+    // Do whatever else you need to do.
+
+    parent::setUp();
+  }
+
+}
+</code></pre></li>
+</ul>
+
+<h2>1.1 2019-01-10T18:04, aklump</h2>
 
 <ul>
 <li><code>TestClass::$schema</code> has been replaced with <code>TestClass::getSchema()</code>.</li>
@@ -40,7 +91,7 @@
 </div>
   
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Thu, 10 Jan 2019 18:08:26 -0800</p>
+    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Mon, 08 Apr 2019 16:49:40 -0700</p>
   </div>
 </footer>
 
