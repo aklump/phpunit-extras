@@ -8,6 +8,7 @@ use AKlump\PHPUnit\EasyMock;
 use AKlump\PHPUnit\EasyMockTrait;
 
 // @loftDocs.markdown(## Here is the Test)
+// @loftDocs.markdown(The test class will have the following properties setted automatically `$this->obj` and `$this->args` to be used by your methods.)
 
 class ConstructorMockArgumentsUnitTest extends \PHPUnit_Framework_TestCase {
 

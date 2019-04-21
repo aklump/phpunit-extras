@@ -30,6 +30,9 @@
         },
         {
             "id": "constructor-calls-argument-method"
+        },
+        {
+            "id": "test-with-setup"
         }
     ]
 }

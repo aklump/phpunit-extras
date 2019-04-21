@@ -16,6 +16,16 @@ Trait EasyMockTrait {
   use MockeryPHPUnitIntegration;
 
   /**
+   * The schema definition.
+   *
+   * @var array
+   *
+   * @deprecated This will not be public in future versions.  You should use
+   *   getSchema() instead.
+   */
+  public $schema;
+
+  /**
    * An instance of the class being tested.
    *
    * @var mixed
