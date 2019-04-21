@@ -36,7 +36,7 @@ class TestWithSetUpMethodUnitTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function setUp() {
-    $this->easyMockSetup();
+    $this->easyMockSetUp();
 
     $this->data = ['fa', 'so'];
   }
