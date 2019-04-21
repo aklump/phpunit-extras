@@ -1,0 +1,35 @@
+{
+    "title": "PhpUnit Extras",
+    "chapters": [
+        {
+            "id": "em",
+            "title": "Easy Mock"
+        }
+    ],
+    "sections": [
+        {
+            "id": "easy-mock"
+        },
+        {
+            "id": "noconstructunittest"
+        },
+        {
+            "id": "constructorargumentsunittest"
+        },
+        {
+            "id": "mockobjectsmapunittest"
+        },
+        {
+            "id": "mockobjectsmappartialmockunittest"
+        },
+        {
+            "id": "constructormockargumentsunittest"
+        },
+        {
+            "id": "constructorargumentsusingserviceidsunittest"
+        },
+        {
+            "id": "constructor-calls-argument-method"
+        }
+    ]
+}

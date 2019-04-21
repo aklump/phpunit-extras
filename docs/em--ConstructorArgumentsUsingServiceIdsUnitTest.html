@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Testing Classes with Service-Based Dependency Injection</title>
+  <link href="search/tipuesearch.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body class="page--constructorargumentsusingserviceidsunittest">
+<header>
+  <div class="pager"><a href="em--ConstructorMockArgumentsUnitTest.html" class="prev em--ConstructorMockArgumentsUnitTest">&laquo;Testing Classes With Dependency Injection</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="em--ConstructorCallsArgumentMethodUnitTest.html" class="next constructor-calls-argument-method">Testing Classes that Call an Argument Method in Constructor&raquo;</a></div></header>
+<section class="sub-header">
+  <div class="breadcrumbs"><a href="index.html">Index</a>
+         &raquo
+                        <a href="em--easy-mock.html">Easy Mock</a>
+         &raquo
+      </div>      <div class="search__wrapper">
+  <form action="search--results.html">
+    <input type="text" class="search-input" name="q" id="tipue_search_input" autocomplete="off" required>
+  </form>
+</div>
+  </section>
+
+
+<h1>Testing Classes with Service-Based Dependency Injection</h1>
+
+<section>
+
+<pre>&lt;?php
+
+namespace AKlump\PHPUnit\Test\EasyMock;
+
+use AKlump\PHPUnit\EasyMock;
+use AKlump\PHPUnit\EasyMockTrait;</pre>
+
+<h2>Abstract Test Base Providing Services</h2>
+
+<p>To be able to provide class arguments based on service ids, you must implement <code>getService</code> in your test class (or abstract parent class), which hooks into your app's <a href="https://symfony.com/doc/current/service_container.html">service container</a>.</p>
+
+<pre>abstract class TestBase extends \PHPUnit_Framework_TestCase {
+
+  use EasyMockTrait;
+
+  static $lima, $november;
+
+  /**
+   * A contrived example of a service container retrieval.
+   */
+  public function getService($service_name) {
+    switch ($service_name) {
+      case 'my_app.lima':
+        if (!static::$lima) {
+          static::$lima = new Lima();
+        }
+
+        return static::$lima;
+
+      case 'my_app.mike':
+        // Non-shared: each call is a new instance.
+        return new Mike();
+
+      case 'my_app.november':
+        if (!static::$november) {
+          static::$november = new November();
+        }
+
+        return static::$november;
+    }
+
+    return NULL;
+  }
+
+}</pre>
+
+<h2>Here is the Test</h2>
+
+<pre>class ConstructorArgumentsUsingServiceIdsUnitTest extends TestBase {
+
+  protected function getSchema() {
+    return [
+      'classToBeTested' => "AKlump\PHPUnit\Test\EasyMock\Kilo",
+
+      // This is how we provide arguments to the class being tested using
+      // service ids, in this example we have a service id 'my_app.lima'.
+      // The order must match that of the constructor.
+      'classArgumentsMap' => [
+
+        'lima' => ['my_app.lima', EasyMock::SERVICE],
+
+        // This is a shorthand form of the above; a string prefixed with '@'
+        // means a shared service, where the id is 'my_app.november'.
+        'november' => '@my_app.november',
+
+        'mike' => ['my_app.mike', EasyMock::NON_SHARED_SERVICE],
+      ],
+    ];
+  }
+
+  public function testAbleToCallServiceMethodsAsExpectedViaDependencyGetter() {
+    $this->assertSame('parrotlet', $this->obj->getLima()->getAnimal());
+    $this->assertSame('zebra', $this->obj->getMike()->getAnimal());
+    $this->assertSame('cat', $this->obj->getNovember()->getAnimal());
+  }
+
+  public function testConstructor() {
+
+    // Use this assertion to quickly make sure constructor works as expected.
+    $this->assertConstructorSetsInternalProperties();
+  }
+
+}</pre>
+
+<h2>Class Being Tested</h2>
+
+<pre>class Kilo {
+
+  protected $lima, $mike, $november;
+
+  public function __construct(Lima $lima, November $november, Mike $mike) {
+    $this->lima = $lima;
+    $this->mike = $mike;
+    $this->november = $november;
+  }
+
+  public function getLima() {
+    return $this->lima;
+  }
+
+  public function getMike() {
+    return $this->mike;
+  }
+
+  public function getNovember() {
+    return $this->november;
+  }
+
+}</pre>
+
+<h2>Dependency Injected Service Classes</h2>
+
+<pre>/**
+ * Lima is registered in our app under the service id `my_app.lima`.
+ */
+class Lima {
+
+  public function getAnimal() {
+    return 'parrotlet';
+  }
+
+}
+
+/**
+ * November is registered in our app under the service id `my_app.november`.
+ */
+class November {
+
+  public function getAnimal() {
+    return 'cat';
+  }
+
+}</pre>
+
+<h2>Dependency Injected Non-Shared Service Class</h2>
+
+<p>Learn more about <a href="https://symfony.com/doc/current/service_container/shared.html">non-shared services</a>.</p>
+
+<pre>/**
+ * Mike is registered in our app under the service id `my_app.mike`. It is a
+ * non-shared service.
+ */
+class Mike {
+
+  public function getAnimal() {
+    return 'zebra';
+  }
+
+}</pre>
+</section>
+
+<div class="search__results">
+  <div id="tipue_search_content"></div>
+</div>
+
+<footer>
+  <div class="pager"><a href="em--ConstructorMockArgumentsUnitTest.html" class="prev em--ConstructorMockArgumentsUnitTest">&laquo;Testing Classes With Dependency Injection</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="em--ConstructorCallsArgumentMethodUnitTest.html" class="next constructor-calls-argument-method">Testing Classes that Call an Argument Method in Constructor&raquo;</a></div>  
+  <div id="footer-legaleeze">
+    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Sat, 20 Apr 2019 21:27:52 -0700</p>
+  </div>
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="search/tipuesearch_content.js"></script>
+  <script src="search/tipuesearch_set.js"></script>
+  <script src="search/tipuesearch.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#tipue_search_input').tipuesearch()
+    })
+  </script>
+<script src="js/core.js"></script>
+</body>
+</html>
+

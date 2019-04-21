@@ -9,16 +9,19 @@
 
 <body class="page--readme">
 <header>
-  <div class="pager">
-  <a href="CHANGELOG.html" class="prev CHANGELOG">&laquo;CHANGELOG</a>
-  <a href="index.html" class="index">Index</a>
-  <a href="examples.html" class="next examples">Examples&raquo;</a>
+  <div class="pager"><a href="CHANGELOG.html" class="prev CHANGELOG">&laquo;CHANGELOG</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="files.html" class="next files">Working With Files&raquo;</a></div></header>
+<section class="sub-header">
+  <div class="breadcrumbs"><a href="index.html">Index</a>
+         &raquo
+      </div>      <div class="search__wrapper">
+  <form action="search--results.html">
+    <input type="text" class="search-input" name="q" id="tipue_search_input" autocomplete="off" required>
+  </form>
 </div>
-</header>
+  </section>
 
 
-  <h1>PHPUnit Extras</h1>
-  <div class="breadcrumb"><a href="index.html">Index</a></div>
+<h1>PHPUnit Extras</h1>
 
 <section>
 
@@ -36,41 +39,6 @@
 <h2>Contributing</h2>
 
 <p>If you find this project useful... please consider <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=4E5KZHDQCEUV8&amp;item_name=Gratitude%20for%20aklump%2Fphpunit_extras">making a donation</a>.</p>
-
-<h2>Usage</h2>
-
-<h3>Test a Class With String Arguments</h3>
-
-<p>In this example the class being tested only takes string arguments, so there is no mocking involved.  Here's how you would set that up.</p>
-
-<pre><code>&lt;?php
-
-class Foo {
-
-  protected $schema = [
-    'classToBeTested' =&gt; MyClassToBeTested::class,
-
-    // You still need to defined the properties, which the constructor should set, but the values are null, indicating there is no automatic mocking.
-    'classArgumentsMap' =&gt; [
-      'alpha' =&gt; NULL,
-      'bravo' =&gt; NULL,
-    ],
-  ];
-
-  public function testSomething() {
-
-    // You hard code the argument values here.
-    $this-&gt;args-&gt;alpha = 'lorem';
-    $this-&gt;args-&gt;bravo = 'ipsum';
-
-    // The create the object before any asserts.
-    $this-&gt;createObj();
-
-   ... one or more assertions.
-  }
-
-}
-</code></pre>
 </section>
 
 <div class="search__results">
@@ -78,18 +46,21 @@ class Foo {
 </div>
 
 <footer>
-  <div class="pager">
-  <a href="CHANGELOG.html" class="prev CHANGELOG">&laquo;CHANGELOG</a>
-  <a href="index.html" class="index">Index</a>
-  <a href="examples.html" class="next examples">Examples&raquo;</a>
-</div>
-  
+  <div class="pager"><a href="CHANGELOG.html" class="prev CHANGELOG">&laquo;CHANGELOG</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="files.html" class="next files">Working With Files&raquo;</a></div>  
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Mon, 08 Apr 2019 16:49:40 -0700</p>
+    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Sat, 20 Apr 2019 21:27:51 -0700</p>
   </div>
 </footer>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="search/tipuesearch_content.js"></script>
+  <script src="search/tipuesearch_set.js"></script>
+  <script src="search/tipuesearch.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#tipue_search_input').tipuesearch()
+    })
+  </script>
 <script src="js/core.js"></script>
 </body>
 </html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Testing Classes that Call an Argument Method in Constructor</title>
+  <link href="search/tipuesearch.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body class="page--constructor-calls-argument-method">
+<header>
+  <div class="pager"><a href="em--ConstructorArgumentsUsingServiceIdsUnitTest.html" class="prev em--ConstructorArgumentsUsingServiceIdsUnitTest">&laquo;Testing Classes with Service-Based Dependency Injection</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="CHANGELOG.html" class="next changelog">CHANGELOG&raquo;</a></div></header>
+<section class="sub-header">
+  <div class="breadcrumbs"><a href="index.html">Index</a>
+         &raquo
+                        <a href="em--easy-mock.html">Easy Mock</a>
+         &raquo
+      </div>      <div class="search__wrapper">
+  <form action="search--results.html">
+    <input type="text" class="search-input" name="q" id="tipue_search_input" autocomplete="off" required>
+  </form>
+</div>
+  </section>
+
+
+<h1>Testing Classes that Call an Argument Method in Constructor</h1>
+
+<section>
+
+<pre>&lt;?php
+
+namespace AKlump\PHPUnit\Test\EasyMock;
+
+use AKlump\PHPUnit\EasyMockTrait;</pre>
+
+<h2>Here is the Test</h2>
+
+<pre>class ConstructorCallsArgumentMethodUnitTest extends \PHPUnit_Framework_TestCase {
+
+  use EasyMockTrait;
+
+  protected function getSchema() {
+    return [
+      'classToBeTested' => '\AKlump\PHPUnit\Test\EasyMock\Oscar',
+      'classArgumentsMap' => [
+
+        // We can manually create a mocked object with a pre-defined expectation
+        // so that the constructor is able to call the expectation method, when
+        // we use a callable like this:
+        'pappa' => function () {
+          $mock = \Mockery::mock('\AKlump\PHPUnit\Test\EasyMock\Pappa');
+          $mock->allows('setDate');
+
+          return $mock;
+        },
+      ],
+    ];
+  }
+
+  public function testConstructor() {
+    $this->assertConstructorSetsInternalProperties();
+  }
+}</pre>
+
+<h2>Class Being Tested</h2>
+
+<pre>class Oscar {
+
+  private $pappa;
+
+  public function __construct(Pappa $pappa) {
+    $this->pappa = $pappa;
+    $this->pappa->setDate(date_create());
+  }
+
+}</pre>
+
+<h2>Class With a Method That Gets Called in Oscar::__construct</h2>
+
+<pre>class Pappa {
+
+  private $date;
+
+  public function setDate(\DateTime $date) {
+    $this->date = $date;
+  }
+
+}</pre>
+</section>
+
+<div class="search__results">
+  <div id="tipue_search_content"></div>
+</div>
+
+<footer>
+  <div class="pager"><a href="em--ConstructorArgumentsUsingServiceIdsUnitTest.html" class="prev em--ConstructorArgumentsUsingServiceIdsUnitTest">&laquo;Testing Classes with Service-Based Dependency Injection</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="CHANGELOG.html" class="next changelog">CHANGELOG&raquo;</a></div>  
+  <div id="footer-legaleeze">
+    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Sat, 20 Apr 2019 21:27:52 -0700</p>
+  </div>
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="search/tipuesearch_content.js"></script>
+  <script src="search/tipuesearch_set.js"></script>
+  <script src="search/tipuesearch.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#tipue_search_input').tipuesearch()
+    })
+  </script>
+<script src="js/core.js"></script>
+</body>
+</html>
+
