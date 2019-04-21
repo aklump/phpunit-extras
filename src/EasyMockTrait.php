@@ -51,7 +51,7 @@ Trait EasyMockTrait {
    * @return array
    *   Must have the following keys:
    *   - classToBeTested string|false
-   *   Should have these keys:
+   *   May have these keys:
    *   - classArgumentsMap array
    *   - mockObjectsMap array
    */
@@ -74,11 +74,7 @@ Trait EasyMockTrait {
     }
     elseif (is_string($value)) {
       if (substr($value, 0, 1) === '@') {
-        $value = substr($value, 1);
-        if (!($service = $this->getService($value))) {
-          throw new \RuntimeException("The following service is unavailable: \"$value\".");
-        }
-        $value = [$service, EasyMock::VALUE];
+        $value = [ltrim($value, '@'), EasyMock::SERVICE];
       }
       else {
         $value = [$value, EasyMock::FULL];
@@ -99,6 +95,15 @@ Trait EasyMockTrait {
         $value = \Mockery::mock($value);
         $value->makePartial();
         break;
+
+      case EasyMock::SERVICE:
+      case EasyMock::NON_SHARED_SERVICE:
+        if (!($service = $this->getService($value))) {
+          throw new \RuntimeException("The following service is unavailable: \"$value\".");
+        }
+        $value = $service;
+        break;
+
     }
 
     return $value;
@@ -143,12 +148,25 @@ Trait EasyMockTrait {
   public function assertConstructorSetsInternalProperties() {
     foreach (array_keys(get_object_vars($this->args)) as $property) {
       $definition = $this->schema['classArgumentsMap'][$property];
-      if (!is_array($definition)) {
+      if (is_string($definition) && substr($definition, 0, 1) === '@') {
+        $definition = [ltrim($definition, '@'), EasyMock::SERVICE];
+      }
+      elseif (!is_array($definition)) {
         $definition = [$definition, EasyMock::PARTIAL];
       }
       switch ($definition[1]) {
         case EasyMock::VALUE:
           $this->assertSame($this->args->{$property}, $definition[0]);
+          break;
+
+        case EasyMock::SERVICE:
+          $this->assertSame($this->args->{$property}, $this->getService($definition[0]));
+          break;
+
+        case EasyMock::NON_SHARED_SERVICE:
+          $service = $this->getService($definition[0]);
+          $this->assertEquals($this->args->{$property}, $service);
+          $this->assertNotSame($this->args->{$property}, $service);
           break;
 
         default:
@@ -162,9 +180,9 @@ Trait EasyMockTrait {
   }
 
   /**
-   * Add this to your classes' ::setUp method to initialize.
+   * {@inheritdoc}
    */
-  public function easyMockSetUp() {
+  public function setUp() {
     $this->schema = static::getSchema();
     if (empty($this->schema)) {
       throw new \RuntimeException(static::class . '::getSchema() must return a non-empty, array.');

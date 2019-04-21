@@ -34,4 +34,20 @@ class EasyMock {
    */
   const VALUE = 2;
 
+  /**
+   * A flag to indicate that the argument value is a shared service id.
+   *
+   * @link https://symfony.com/doc/current/service_container/shared.html
+   */
+  const SERVICE = 3;
+
+  /**
+   * A flag to indicate that the argument value is NOT a shared service id,
+   * that is: each time the service is requested from the container, you
+   * receive a new object instance.
+   *
+   * @link https://symfony.com/doc/current/service_container/shared.html
+   */
+  const NON_SHARED_SERVICE = 4;
+
 }
