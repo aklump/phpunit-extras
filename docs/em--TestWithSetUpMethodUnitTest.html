@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>If Your Test Class Needs a SetUp Method</title>
+  <link href="search/tipuesearch.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body class="page--test-with-setup">
+<header>
+  <div class="pager"><a href="em--ConstructorCallsArgumentMethodUnitTest.html" class="prev em--ConstructorCallsArgumentMethodUnitTest">&laquo;Testing Classes that Call an Argument Method in Constructor</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="CHANGELOG.html" class="next changelog">CHANGELOG&raquo;</a></div></header>
+<section class="sub-header">
+  <div class="breadcrumbs"><a href="index.html">Index</a>
+         &raquo
+                        <a href="em--easy-mock.html">Easy Mock</a>
+         &raquo
+      </div>      <div class="search__wrapper">
+  <form action="search--results.html">
+    <input type="text" class="search-input" name="q" id="tipue_search_input" autocomplete="off" required>
+  </form>
+</div>
+  </section>
+
+
+<h1>If Your Test Class Needs a SetUp Method</h1>
+
+<section>
+
+<pre>&lt;?php
+
+
+namespace AKlump\PHPUnit\Test\EasyMock;
+
+use AKlump\PHPUnit\EasyMock;
+use AKlump\PHPUnit\EasyMockTrait;</pre>
+
+<h2>Here is the Test</h2>
+
+<p>This shows how you will use <code>setUp</code> by aliasing <code>EasyMockTrait::setUp</code>.</p>
+
+<pre>class TestWithSetUpMethodUnitTest extends \PHPUnit_Framework_TestCase {
+
+  use EasyMockTrait {
+    EasyMockTrait::setUp as easyMockSetUp;
+  }
+
+  protected function getSchema() {
+    return [
+      'classToBeTested' => "AKlump\PHPUnit\Test\EasyMock\Quebec",
+      'classArgumentsMap' => [
+        'list' => [['do', 're', 'mi'], EasyMock::VALUE],
+      ],
+    ];
+  }
+
+  public function testTestDataObject() {
+    $this->assertSame(['fa', 'so'], $this->data);
+    $this->assertSame(['do', 're', 'mi'], $this->obj->getList());
+  }
+
+  public function testConstructor() {
+    $this->assertConstructorSetsInternalProperties();
+  }
+
+  public function setUp() {
+    $this->easyMockSetup();
+
+    $this->data = ['fa', 'so'];
+  }
+
+}</pre>
+
+<h2>Class Being Tested</h2>
+
+<pre>class Quebec {
+
+  protected $list;
+
+  public function __construct(array $list) {
+    $this->list = $list;
+  }
+
+  public function getList() {
+    return $this->list;
+  }
+
+}</pre>
+</section>
+
+<div class="search__results">
+  <div id="tipue_search_content"></div>
+</div>
+
+<footer>
+  <div class="pager"><a href="em--ConstructorCallsArgumentMethodUnitTest.html" class="prev em--ConstructorCallsArgumentMethodUnitTest">&laquo;Testing Classes that Call an Argument Method in Constructor</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="CHANGELOG.html" class="next changelog">CHANGELOG&raquo;</a></div>  
+  <div id="footer-legaleeze">
+    <p class="legaleeze center">Version: 1.2.4 &bull; Last Updated: Sat, 20 Apr 2019 21:49:38 -0700</p>
+  </div>
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="search/tipuesearch_content.js"></script>
+  <script src="search/tipuesearch_set.js"></script>
+  <script src="search/tipuesearch.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#tipue_search_input').tipuesearch()
+    })
+  </script>
+<script src="js/core.js"></script>
+</body>
+</html>
+
