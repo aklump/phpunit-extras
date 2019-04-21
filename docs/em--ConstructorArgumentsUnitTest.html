@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Testing Classes With a Constructor</title>
+  <link href="search/tipuesearch.css" rel="stylesheet">
+  <link href="style.css" rel="stylesheet">
+</head>
+
+<body class="page--constructorargumentsunittest">
+<header>
+  <div class="pager"><a href="em--NoConstructorUnitTest.html" class="prev em--NoConstructorUnitTest">&laquo;Testing Classes Without a Constructor</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="em--MockObjectsMapUnitTest.html" class="next mockobjectsmapunittest">Using mockObjectsMap in Tests&raquo;</a></div></header>
+<section class="sub-header">
+  <div class="breadcrumbs"><a href="index.html">Index</a>
+         &raquo
+                        <a href="em--easy-mock.html">Easy Mock</a>
+         &raquo
+      </div>      <div class="search__wrapper">
+  <form action="search--results.html">
+    <input type="text" class="search-input" name="q" id="tipue_search_input" autocomplete="off" required>
+  </form>
+</div>
+  </section>
+
+
+<h1>Testing Classes With a Constructor</h1>
+
+<section>
+
+<pre>&lt;?php
+
+namespace AKlump\PHPUnit\Test\EasyMock;
+
+use AKlump\PHPUnit\EasyMock;
+use AKlump\PHPUnit\EasyMockTrait;</pre>
+
+<h2>Here is the Test</h2>
+
+<pre>class ConstructorArgumentsUnitTest extends \PHPUnit_Framework_TestCase {
+
+  use EasyMockTrait;
+
+  protected function getSchema() {
+    return [
+      'classToBeTested' => "AKlump\PHPUnit\Test\EasyMock\Bravo",
+
+      // These are the __construct arguments for class Bravo.  Each element key
+      // is the class property, the value is an array where: 0 = the value of
+      // the argument, and 1 = indicates the type of argument is a value.
+      // The order must match that of the constructor.
+      'classArgumentsMap' => [
+        'string' => ['aardvark', EasyMock::VALUE],
+        'int' => [123, EasyMock::VALUE],
+        'float' => [4.56, EasyMock::VALUE],
+        'array' => [['big' => 'fish'], EasyMock::VALUE],
+        'object' => [(object) ['small' => 'fry'], EasyMock::VALUE],
+      ],
+    ];
+  }
+
+  public function testGetValueReturnsExpectedConstructorValue() {
+    $this->assertSame('aardvark', $this->obj->getValue('string'));
+    $this->assertSame(123, $this->obj->getValue('int'));
+    $this->assertSame(4.56, $this->obj->getValue('float'));
+    $this->assertSame(['big' => 'fish'], $this->obj->getValue('array'));
+    $this->assertEquals((object) ['small' => 'fry'], $this->obj->getValue('object'));
+  }
+
+  public function testConstructor() {
+
+    // Use this assertion to quickly make sure constructor works as expected.
+    $this->assertConstructorSetsInternalProperties();
+  }
+
+}</pre>
+
+<h2>Class Being Tested</h2>
+
+<pre>final class Bravo {
+
+  protected $string, $int, $float, $array, $object;
+
+  public function __construct($string, $int, $float, $array, $object) {
+    $this->string = $string;
+    $this->int = $int;
+    $this->float = $float;
+    $this->array = $array;
+    $this->object = $object;
+  }
+
+  public function getValue($key) {
+    return $this->{$key};
+  }
+
+}</pre>
+</section>
+
+<div class="search__results">
+  <div id="tipue_search_content"></div>
+</div>
+
+<footer>
+  <div class="pager"><a href="em--NoConstructorUnitTest.html" class="prev em--NoConstructorUnitTest">&laquo;Testing Classes Without a Constructor</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="em--MockObjectsMapUnitTest.html" class="next mockobjectsmapunittest">Using mockObjectsMap in Tests&raquo;</a></div>  
+  <div id="footer-legaleeze">
+    <p class="legaleeze center">Version: 1.0 &bull; Last Updated: Sat, 20 Apr 2019 21:27:51 -0700</p>
+  </div>
+</footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+  <script src="search/tipuesearch_content.js"></script>
+  <script src="search/tipuesearch_set.js"></script>
+  <script src="search/tipuesearch.min.js"></script>
+  <script>
+    $(document).ready(function() {
+      $('#tipue_search_input').tipuesearch()
+    })
+  </script>
+<script src="js/core.js"></script>
+</body>
+</html>
+

@@ -1,6 +1,6 @@
 # PHPUnit Extras
 
-![phpunit_extras](images/screenshot.jpg)
+![phpunit_extras](docs/images/screenshot.jpg)
 
 ## Summary
 
