@@ -62,7 +62,7 @@ pre_hooks = "example_code.php"
 #
 # The path to a .info file or a .json file containing 'version' as a first level key, whose value indicates the documentation version.
 # This can be relative to the directory containing core-config.sh or absolute if it begins with a /
-#version_file = "web_package.info"
+version_file = "../version.yml"
 
 #
 # These paths are relative to the directory containing core-config.sh.
