@@ -1,4 +1,14 @@
-## 1.2
+## [Unreleased]
+
+## [1.2.1] - 2019-04-20
+  
+### Changed
+- `\AKlump\PHPUnit\EasyMockTrait::easyMockSetUp` to `\AKlump\PHPUnit\EasyMockTrait::setUp`
+- See [this page](https://aklump.github.io/phpunit-extras/em--TestWithSetUpMethodUnitTest.html) for more information about implementation.
+
+## [1.2] - 2019-04-08
+
+### Changed
 
 * BREAKING CHANGES!!!
 * `EasyMockTestBase` has been replaced with `EasyMockTrait` and `EasyMock`.  This will provide greater flexibility in systems that already extend `\PHPUnit_Framework_TestCase`.
@@ -46,7 +56,9 @@
         
         }
 
-## 1.1 2019-01-10T18:04, aklump
+## [1.1] - 2019-01-10
+
+### Changed
 
 * `TestClass::$schema` has been replaced with `TestClass::getSchema()`.
 * You must replace all usages of the class property with a class method.
