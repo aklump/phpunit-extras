@@ -32,13 +32,14 @@
 namespace AKlump\PHPUnit\Test\EasyMock;
 
 use AKlump\PHPUnit\EasyMock;
-use AKlump\PHPUnit\EasyMockTrait;</pre>
+use AKlump\PHPUnit\EasyMockTrait;
+use PHPUnit\Framework\TestCase;</pre>
 
 <h2>Abstract Test Base Providing Services</h2>
 
 <p>To be able to provide class arguments based on service ids, you must implement <code>getService</code> in your test class (or abstract parent class), which hooks into your app's <a href="https://symfony.com/doc/current/service_container.html">service container</a>.</p>
 
-<pre>abstract class TestBase extends \PHPUnit_Framework_TestCase {
+<pre>abstract class TestBase extends TestCase {
 
   use EasyMockTrait;
 
@@ -185,7 +186,7 @@ class Mike {
 <footer>
   <div class="pager"><a href="em--ConstructorMockArgumentsUnitTest.html" class="prev em--ConstructorMockArgumentsUnitTest">&laquo;Testing Classes With Dependency Injection</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="em--ConstructorCallsArgumentMethodUnitTest.html" class="next constructor-calls-argument-method">Testing Classes that Call an Argument Method in Constructor&raquo;</a></div>  
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 1.2.5 &bull; Last Updated: Sat, 20 Apr 2019 21:50:27 -0700</p>
+    <p class="legaleeze center">Version: 2.0.0 &bull; Last Updated: Fri, 07 Jun 2019 08:15:42 -0700</p>
   </div>
 </footer>
 
