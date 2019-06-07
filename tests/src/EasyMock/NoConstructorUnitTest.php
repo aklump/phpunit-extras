@@ -6,10 +6,11 @@
 namespace AKlump\PHPUnit\Test\EasyMock;
 
 use AKlump\PHPUnit\EasyMockTrait;
+use PHPUnit\Framework\TestCase;
 
 // @loftDocs.markdown(## Here is the Test)
 
-class NoConstructorUnitTest extends \PHPUnit_Framework_TestCase {
+class NoConstructorUnitTest extends TestCase {
 
   use EasyMockTrait;
 

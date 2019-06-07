@@ -6,11 +6,12 @@ namespace AKlump\PHPUnit\Test\EasyMock;
 
 use AKlump\PHPUnit\EasyMock;
 use AKlump\PHPUnit\EasyMockTrait;
+use PHPUnit\Framework\TestCase;
 
 // @loftDocs.markdown(## Here is the Test)
 // @loftDocs.markdown(In this implementation of `getSchema` using `mockObjectsMap` combined with `EasyMock::PARTIAL`, `$this->colorHandler` becomes a [partial mock](http://docs.mockery.io/en/latest/reference/partial_mocks.html).)
 
-class MockObjectsMapPartialMockUnitTest extends \PHPUnit_Framework_TestCase {
+class MockObjectsMapPartialMockUnitTest extends TestCase {
 
   use EasyMockTrait;
 

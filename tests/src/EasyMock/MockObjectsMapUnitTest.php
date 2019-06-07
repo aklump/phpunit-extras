@@ -5,11 +5,12 @@
 namespace AKlump\PHPUnit\Test\EasyMock;
 
 use AKlump\PHPUnit\EasyMockTrait;
+use PHPUnit\Framework\TestCase;
 
 // @loftDocs.markdown(## Here is the Test)
 // @loftDocs.markdown(The `mockObjectsMap` portion of `getSchema` provides a means of having one or more mocked objects automatically created before the start of each test method.)
 
-class MockObjectsMapUnitTest extends \PHPUnit_Framework_TestCase {
+class MockObjectsMapUnitTest extends TestCase {
 
   use EasyMockTrait;
 

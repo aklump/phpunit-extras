@@ -7,11 +7,12 @@ namespace AKlump\PHPUnit\Test\EasyMock;
 
 use AKlump\PHPUnit\EasyMock;
 use AKlump\PHPUnit\EasyMockTrait;
+use PHPUnit\Framework\TestCase;
 
 // @loftDocs.markdown(## Here is the Test)
 // @loftDocs.markdown(This shows how you will use `setUp` by aliasing `EasyMockTrait::setUp`.)
 
-class TestWithSetUpMethodUnitTest extends \PHPUnit_Framework_TestCase {
+class TestWithSetUpMethodUnitTest extends TestCase {
 
   use EasyMockTrait {
     EasyMockTrait::setUp as easyMockSetUp;

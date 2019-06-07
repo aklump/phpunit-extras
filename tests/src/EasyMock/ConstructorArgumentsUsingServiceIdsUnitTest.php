@@ -6,11 +6,12 @@ namespace AKlump\PHPUnit\Test\EasyMock;
 
 use AKlump\PHPUnit\EasyMock;
 use AKlump\PHPUnit\EasyMockTrait;
+use PHPUnit\Framework\TestCase;
 
 // @loftDocs.markdown(## Abstract Test Base Providing Services)
 // @loftDocs.markdown(To be able to provide class arguments based on service ids, you must implement `getService` in your test class (or abstract parent class), which hooks into your app's [service container](https://symfony.com/doc/current/service_container.html).)
 
-abstract class TestBase extends \PHPUnit_Framework_TestCase {
+abstract class TestBase extends TestCase {
 
   use EasyMockTrait;
 
