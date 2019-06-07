@@ -33,13 +33,14 @@
 namespace AKlump\PHPUnit\Test\EasyMock;
 
 use AKlump\PHPUnit\EasyMock;
-use AKlump\PHPUnit\EasyMockTrait;</pre>
+use AKlump\PHPUnit\EasyMockTrait;
+use PHPUnit\Framework\TestCase;</pre>
 
 <h2>Here is the Test</h2>
 
 <p>This shows how you will use <code>setUp</code> by aliasing <code>EasyMockTrait::setUp</code>.</p>
 
-<pre>class TestWithSetUpMethodUnitTest extends \PHPUnit_Framework_TestCase {
+<pre>class TestWithSetUpMethodUnitTest extends TestCase {
 
   use EasyMockTrait {
     EasyMockTrait::setUp as easyMockSetUp;
@@ -95,7 +96,7 @@ use AKlump\PHPUnit\EasyMockTrait;</pre>
 <footer>
   <div class="pager"><a href="em--ConstructorCallsArgumentMethodUnitTest.html" class="prev em--ConstructorCallsArgumentMethodUnitTest">&laquo;Testing Classes that Call an Argument Method in Constructor</a><a href="index.html" class="index pager__book-title">PhpUnit Extras</a><a href="CHANGELOG.html" class="next changelog">CHANGELOG&raquo;</a></div>  
   <div id="footer-legaleeze">
-    <p class="legaleeze center">Version: 1.2.5 &bull; Last Updated: Sat, 20 Apr 2019 21:50:28 -0700</p>
+    <p class="legaleeze center">Version: 2.0.0 &bull; Last Updated: Fri, 07 Jun 2019 08:13:44 -0700</p>
   </div>
 </footer>
 
