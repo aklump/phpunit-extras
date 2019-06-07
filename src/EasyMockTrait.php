@@ -156,7 +156,11 @@ Trait EasyMockTrait {
    * @throws \ReflectionException
    */
   public function assertConstructorSetsInternalProperties() {
-    foreach (array_keys(get_object_vars($this->args)) as $property) {
+    $properties = array_keys(get_object_vars($this->args));
+    if (empty($properties)) {
+      $this->assertTrue(TRUE);
+    }
+    foreach ($properties as $property) {
       $definition = $this->schema['classArgumentsMap'][$property];
       if (is_string($definition) && substr($definition, 0, 1) === '@') {
         $definition = [ltrim($definition, '@'), EasyMock::SERVICE];
@@ -170,13 +174,13 @@ Trait EasyMockTrait {
           break;
 
         case EasyMock::SERVICE:
-          $this->assertSame($this->args->{$property}, $this->getService($definition[0]));
+          $this->assertSame($this->args->{$property}, $this->getService($definition[0]), "The service manager returned a new instance of \"$property\"; should you declare \"$property\" as EasyMock::NON_SHARED_SERVICE?");
           break;
 
         case EasyMock::NON_SHARED_SERVICE:
           $service = $this->getService($definition[0]);
           $this->assertEquals($this->args->{$property}, $service);
-          $this->assertNotSame($this->args->{$property}, $service);
+          $this->assertNotSame($this->args->{$property}, $service, "The service manager did not return a new instance of \"$property\"; should you declare \"$property\" as EasyMock::SERVICE?");
           break;
 
         default:
